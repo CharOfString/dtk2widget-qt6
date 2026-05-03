@@ -1,4 +1,11 @@
-TARGET = dtkwidget
+# DTK2的Qt6移植修改
+# 1. 命名: 采用类似libdtk2widget.so.6.0.1 / dtk2widget.pc / /usr/include/dtk2/DWidget的命名，与Qt5 DTK2区分并共存
+# 2. SONAME版本号改为6
+
+TARGET = dtk2widget
+VERSION = 6.0.1
+isEmpty(INCLUDE_INSTALL_DIR): INCLUDE_INSTALL_DIR = $$PREFIX/include/dtk2
+isEmpty(includes.path):       includes.path = $$INCLUDE_INSTALL_DIR/DWidget
 TEMPLATE = lib
 QT += dtkcore
 include($$PWD/../dtk_build.prf)
@@ -8,17 +15,13 @@ CONFIG += internal_module
 # 暂时禁用多媒体支持
 DTK_NO_MULTIMEDIA = 1
 
-QT += network concurrent multimedia multimediawidgets statemachine
-greaterThan(QT_MAJOR_VERSION, 4) {
-  QT += widgets widgets-private
-  # Qt >= 5.8
-  greaterThan(QT_MAJOR_VERSION, 5)|greaterThan(QT_MINOR_VERSION, 7): QT += gui-private
-  else: QT += platformsupport-private
-}
+QT += network concurrent multimedia multimediawidgets
+qtHaveModule(statemachine): QT += statemachine
+QT += widgets widgets-private gui-private
 
 linux* {
-    #QT += x11extras dbus
     QT += dbus
+    # Qt6：QX11Info好像移到了QPA Private头
 
     ###(zccrs): use load(dtk_qmake), dtkcore > 2.0.9
     ARCH = $$QMAKE_HOST.arch

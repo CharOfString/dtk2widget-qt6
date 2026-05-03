@@ -2,7 +2,7 @@ include(private/private.pri)
 include(dialogs.pri)
 include($$PWD/../platforms/platforms.pri)
 
-QT += statemachine
+qtHaveModule(statemachine): QT += statemachine
 
 win32* {
     INCLUDEPATH += $$PWD/../platforms/windows
@@ -129,7 +129,8 @@ HEADERS += $$PWD/dslider.h\
     $$PWD/dborderlesswindow.h \
     $$PWD/dprogressbar.h
 
-SOURCES += $$PWD/dslider.cpp \
+SOURCES += $$PWD/dtkwidget_init.cpp \
+    $$PWD/dslider.cpp \
     $$PWD/dapplicationhelper.cpp \
     $$PWD/dapplicationsettings.cpp \
     $$PWD/dcheckbox.cpp \

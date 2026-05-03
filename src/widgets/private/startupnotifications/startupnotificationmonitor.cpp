@@ -16,7 +16,6 @@
  */
 
 #include <QtWidgets>
-//#include <QX11Info>
 #include <QtGui/private/qtx11extras_p.h>
 
 #include <libsn/sn-monitor.h>

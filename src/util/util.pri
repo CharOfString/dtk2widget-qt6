@@ -19,12 +19,13 @@ SOURCES += \
 
 linux* {
 CONFIG += link_pkgconfig
-PKGCONFIG += gsettings-qt6 librsvg-2.0 dframeworkdbus
-#PKGCONFIG += gsettings-qt librsvg-2.0 dframeworkdbus
+PKGCONFIG += gsettings-qt6 librsvg-2.0
+#PKGCONFIG += gsettings-qt librsvg-2.0
 
 HEADERS += \
     $$PWD/dregionmonitor.h \
-    $$PWD/private/dregionmonitor_p.h
+    $$PWD/private/dregionmonitor_p.h \
+    $$PWD/private/xeventmonitor_p.h
 
 SOURCES += \
     $$PWD/ddesktopservices_linux.cpp \

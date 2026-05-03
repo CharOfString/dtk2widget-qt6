@@ -1599,22 +1599,30 @@ QList<int> DSimpleListView::getRenderWidths()
 {
     D_D(DSimpleListView);
 
+    // 将未设置的列视为可见。在某些构建版本中，Qt5 的 QList[i] 越界访问会静默返回一个默认构造的 bool 值（即 false）。
+    // 在一些Qt6上（据我在GXDE25上测试时确认）会直接导致崩溃。
+    // 现在引入一个辅助变量，确保在setColumnTitleInfo()没设置列可见性之前就不会吃到SIGSEGV了...
+    // TODO: 不优雅的Workaround，需要后期修改... 目前只保证能跑
+    auto isColVisible = [this](int i) -> bool {
+        return i < columnVisibles.size() ? columnVisibles[i] : true;
+    };
+
     QList<int> renderWidths;
     if (d->columnWidths.length() > 0) {
         if (d->columnWidths.contains(-1)) {
             for (int i = 0; i < d->columnWidths.count(); i++) {
                 if (d->columnWidths[i] != -1) {
-                    if (columnVisibles[i]) {
+                    if (isColVisible(i)) {
                         renderWidths << d->columnWidths[i];
                     } else {
                         renderWidths << 0;
                     }
                 } else {
-                    if (columnVisibles[i]) {
+                    if (isColVisible(i)) {
                         int totalWidthOfOtherColumns = 0;
 
                         for (int j = 0; j < d->columnWidths.count(); j++) {
-                            if (d->columnWidths[j] != -1 && columnVisibles[j]) {
+                            if (d->columnWidths[j] != -1 && isColVisible(j)) {
                                 totalWidthOfOtherColumns += d->columnWidths[j];
                             }
                         }
@@ -1627,7 +1635,7 @@ QList<int> DSimpleListView::getRenderWidths()
             }
         } else {
             for (int i = 0; i < d->columnWidths.count(); i++) {
-                if (columnVisibles[i]) {
+                if (isColVisible(i)) {
                     renderWidths << d->columnWidths[i];
                 } else {
                     renderWidths << 0;

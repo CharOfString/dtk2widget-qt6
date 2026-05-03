@@ -1,10 +1,6 @@
 QT += core gui multimedia multimediawidgets svg
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 QT += dtkcore
-linux* {
-    CONFIG += link_pkgconfig
-    PKGCONFIG += dframeworkdbus
-}
 
 # 暂时禁用多媒体支持
 DTK_NO_MULTIMEDIA = 1
@@ -79,9 +75,9 @@ win32* {
     CONFIG += no_lflags_merge
 }
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../../src/release -ldtkwidget
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../../src/debug -ldtkwidgetd
-else:unix: LIBS += -L$$OUT_PWD/../../../src -ldtkwidget
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../../src/release -ldtk2widget
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../../src/debug -ldtk2widgetd
+else:unix: LIBS += -L$$OUT_PWD/../../../src -ldtk2widget
 
 INCLUDEPATH += $$PWD/../../../src
 INCLUDEPATH += $$PWD/../../../src/widgets

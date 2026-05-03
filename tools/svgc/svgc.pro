@@ -22,7 +22,8 @@ isEmpty(PREFIX){
     PREFIX = /usr
 }
 isEmpty(BIN_INSTALL_DIR) {
-    BIN_INSTALL_DIR=$${PREFIX}/lib/dtk2
+    # 对于Qt6版本，修改了bin文件夹的位置以与旧Qt5版本做区分
+    BIN_INSTALL_DIR=$${PREFIX}/lib/dtk2-qt6
 }
 !isEmpty(DTK_STATIC_LIB){
     DEFINES += DTK_STATIC_LIB
@@ -34,9 +35,10 @@ target.path = $${BIN_INSTALL_DIR}
 
 INSTALLS += target
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../src/release/ -ldtkwidget
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../src/debug/ -ldtkwidget
-else:unix: LIBS += -L$$OUT_PWD/../../src/ -ldtkwidget
+# 重命名，与Qt5编译版本区分
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../src/release/ -ldtk2widget
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../src/debug/ -ldtk2widget
+else:unix: LIBS += -L$$OUT_PWD/../../src/ -ldtk2widget
 
 INCLUDEPATH += $$PWD/../../src
 INCLUDEPATH += $$PWD/../../src/util

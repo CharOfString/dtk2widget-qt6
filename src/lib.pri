@@ -21,9 +21,6 @@ isEmpty(INCLUDE_INSTALL_DIR) {
 }
 
 load(configure)
-qtCompileTest(libdframeworkdbus) {
-    DEFINES += DBUS_VERSION_0_4_2
-}
 
 INSTALLS += includes target
 

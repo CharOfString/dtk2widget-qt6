@@ -1,3 +1,5 @@
+# 已废弃，此仓库不再维护Qt6对应的conanfile，请使用debian打包工具进行打包
+
 from conans import ConanFile, tools
 import os
 

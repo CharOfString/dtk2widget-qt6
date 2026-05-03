@@ -1,29 +1,37 @@
 #!/usr/bin/make -f
 DPKG_EXPORT_BUILDFLAGS = 1
 include /usr/share/dpkg/default.mk
-export QT_SELECT = qt5
 
 DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
+DEB_BUILD_ARCH    ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
-DEB_BUILD_ARCH ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
+LIBDIR = /usr/lib/$(DEB_HOST_MULTIARCH)
+BUILD_DIR = build-qt6
 
-ifneq (,$(wildcard .git/config))
-	CONFIG_VERSION=
-else
-	VERSION = $(DEB_VERSION_UPSTREAM)
-	_PACK_VER = $(shell echo $(VERSION) | awk -F'[+_~-]' '{print $$1}')
-	_BUILD_VER = $(shell echo $(VERSION) | awk -F'[+_~-]' '{print $$2}' | sed 's/[^0-9]//g')
-	ifeq ($(_BUILD_VER),)
-		CONFIG_VERSION = $(_PACK_VER)
-	else
-		CONFIG_VERSION = $(_PACK_VER).$(_BUILD_VER)
-	endif
-endif
 %:
 	dh $@ --parallel
 
 override_dh_auto_configure:
-	dh_auto_configure -- LIB_INSTALL_DIR=/usr/lib/$(DEB_HOST_MULTIARCH)
+	mkdir -p $(BUILD_DIR)
+	cd $(BUILD_DIR) && qmake6 \
+		$(CURDIR)/dtkwidget.pro \
+		PREFIX=/usr LIB_INSTALL_DIR=$(LIBDIR)
+
+override_dh_auto_build:
+	$(MAKE) -C $(BUILD_DIR) -j$(shell nproc)
+
+override_dh_auto_install:
+	$(MAKE) -C $(BUILD_DIR) install INSTALL_ROOT=$(CURDIR)/debian/tmp
+
+	sed -i 's|^Requires: dtkcore$$|Requires: dtk6core|' \
+		$(CURDIR)/debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/pkgconfig/dtk2widget.pc
+	# 使用-L${libdir}强行指定dtk2widget
+	sed -i 's|^Libs: -ldtk2widget|Libs: -L$${libdir} -ldtk2widget|' \
+		$(CURDIR)/debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/pkgconfig/dtk2widget.pc
+
+override_dh_auto_clean:
+	rm -rf $(BUILD_DIR)
+
 override_dh_makeshlibs:
 	dh_makeshlibs -V
 
@@ -36,4 +44,3 @@ ifeq ($(DEB_BUILD_ARCH), mips64el)
 override_dh_makeshlibs:
 	dh_makeshlibs -V -- -c0
 endif
-

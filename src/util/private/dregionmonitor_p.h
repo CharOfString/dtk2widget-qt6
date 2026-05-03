@@ -8,7 +8,7 @@
 #include <QRegion>
 #include <QScreen>
 
-#include <com_deepin_api_xeventmonitor.h>
+#include "xeventmonitor_p.h"
 
 DCORE_USE_NAMESPACE
 DWIDGET_BEGIN_NAMESPACE

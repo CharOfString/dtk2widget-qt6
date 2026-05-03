@@ -27,7 +27,6 @@
 #define KEYBOARDMONITOR_H
 
 #include <QThread>
-//#include <QX11Info>
 #include <QtGui/private/qtx11extras_p.h>
 #include <dtkwidget_global.h>
 
